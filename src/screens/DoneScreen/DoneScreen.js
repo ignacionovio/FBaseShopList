@@ -5,6 +5,9 @@ import { firebase } from '../../firebase/config';
 import * as GestureHandler from 'react-native-gesture-handler';
 const { Swipeable } = GestureHandler;
 
+let moment = require('moment');
+moment.locale('es');
+
 export default function DoneScreen(props) {
 
     const [entityText, setEntityText] = useState('')
@@ -94,18 +97,16 @@ export default function DoneScreen(props) {
 
     const renderEntity = ({item, index}) => {
 
-        const formatDate = (fechatmstmp) => {
-            var fechaString = null;
+        const formatDate = (fechatmstmp = '01/01/1900') => {
+            let fechaString
             if (fechatmstmp == null) {
-                fechaString = '01/01/1900';
-            } else {
-                var notFormattedDate = fechatmstmp.toDate();
-                var formattedDate = notFormattedDate.toDateString();
-                var [, month, day, year] = formattedDate.split(' ');
-                var ddMmmYyyy = `${day}/${month}/${year}`;
-                fechaString = ddMmmYyyy.toString();
+                fechaString = moment().format('DD/MMM/YY');
             }
-            return (fechaString)
+            else {
+                fechatmstmp = fechatmstmp.toDate();
+                fechaString = moment(fechatmstmp).format('DD/MMM/YY');
+            }
+            return (fechaString);
         };
         
         return (
@@ -115,7 +116,7 @@ export default function DoneScreen(props) {
             >
             <View style={styles.entityContainer}>
                 <Text style={styles.entityText}>
-                    {formatDate(item.doneAt)} - {item.text} - ${item.price}
+                    {formatDate(item.doneAt)} - {item.text.charAt(0).toUpperCase() + item.text.slice(1)} - ${item.price}
                 </Text>
             </View>
             </Swipeable>

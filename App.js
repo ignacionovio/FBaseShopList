@@ -49,8 +49,6 @@ export default function App() {
 
     const cambiaEstado = () => {
       setDone(!done);
-      //done ? (setDone(false)) : (setDone(true));
-      console.log('estado: ' + done);
     };
 
   return (

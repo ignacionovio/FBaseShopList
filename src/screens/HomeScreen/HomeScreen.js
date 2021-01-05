@@ -3,7 +3,11 @@ import { Alert, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View, Ani
 import styles from './styles';
 import { firebase } from '../../firebase/config';
 import * as GestureHandler from 'react-native-gesture-handler';
+import moment from 'moment';
 const { Swipeable } = GestureHandler;
+
+//let moment = require('moment');
+moment.locale('es');
 
 export default function HomeScreen(props) {
 
@@ -94,20 +98,18 @@ export default function HomeScreen(props) {
 
     const renderEntity = ({item, index}) => {
 
-        const formatDate = (fechatmstmp) => {
-            var fechaString = null;
+        const formatDate = (fechatmstmp = '01/01/1900') => {
+            let fechaString
             if (fechatmstmp == null) {
-                fechaString = '01/01/1900';
-            } else {
-                var notFormattedDate = fechatmstmp.toDate();
-                var formattedDate = notFormattedDate.toDateString();
-                var [, month, day, year] = formattedDate.split(' ');
-                var ddMmmYyyy = `${day}/${month}/${year}`;
-                fechaString = ddMmmYyyy.toString();
+                fechaString = moment().format('DD/MMM/YY');
             }
-            return (fechaString)
+            else {
+                fechatmstmp = fechatmstmp.toDate();
+                fechaString = moment(fechatmstmp).format('DD/MMM/YY');
+            }
+            return (fechaString);
         };
-
+        
         return (
             <Swipeable
                 renderLeftActions={(progress, dragX ) => <LeftActions progress={progress} dragX={dragX} onPress={onLeftPress} item={item}/>}
@@ -115,8 +117,8 @@ export default function HomeScreen(props) {
             >
             <View style={styles.entityContainer}>
                 <Text style={styles.entityText}>
-                    {formatDate(item.createdAt)} - {item.text}
-                    {/* {index} - {item.text} - ${item.price} */}
+                    {/* {formatDate(item.createdAt)} - {item.text} */}
+                    {formatDate(item.createdAt)} - {item.text.charAt(0).toUpperCase() + item.text.slice(1)}
                 </Text>
             </View>
             </Swipeable>
