@@ -4,7 +4,7 @@
     "slug": "rnfbase",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "C:/Users/Nacho/Desktop/payment-method.png",
+    "icon": "./payment-method.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -22,9 +22,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "",
+    "description": "App para control personal de gastos",
     "android": {
-      "package": "com.inovio.rnfbase"
+      "package": "com.inovio.rnfbase",
+      "useNextNotificationsApi": true,
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED"
+      ]
     }
   }
 }

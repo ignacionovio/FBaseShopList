@@ -8,13 +8,47 @@ import { LoginScreen, HomeScreen, RegistrationScreen, DoneScreen } from './src/s
 import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
-//
+//import { Notifications } from "expo";
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from "expo-permissions";
+
 import styles from './styles';
 import {TouchableOpacity, Text} from 'react-native';
 
 const Stack = createStackNavigator();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+const getToken = async () => {
+  const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+
+  if (status!== "granted") {
+    return;
+  }
+
+  const token = await Notifications.getExpoPushTokenAsync();
+  //console.log(token);
+
+  if (Platform.OS === 'android') {
+    Notifications.createChannelAndroidAsync('chat-messages', {
+      name: 'Chat messages',
+      sound: true,
+    });
+  }
+
+  return token;
+};
+
 export default function App() {
+
+  getToken();
 
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)

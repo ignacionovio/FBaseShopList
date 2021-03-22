@@ -41,6 +41,40 @@ export default function HomeScreen(props) {
     }, []);
 
     const onAddButtonPress = () => {
+
+        const sendPushNotification = (token, title, body) => {
+            return fetch('https://exp.host/--/api/v2/push/send', {
+              body: JSON.stringify({
+                to: token,
+                title: title,
+                body: body,
+                data: { message: `${title} - ${body}` },
+                sound: "default",
+                icon: "/assets/images/lionIcon180-180.png",
+                android:{
+                    icon: "/assets/images/lionIcon180-180.png",
+                    sound:"default"
+                }
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              method: 'POST',
+            });
+        };
+
+        //ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ] Mi token
+        //ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx] token de july
+
+        if (userID == "cWpIonzeQEduXVovIISGw93gdBF2") { /*soy yo*/
+            sendPushNotification("ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx]","Item agregado",entityText);
+            
+        };
+        
+        if (userID == "x5jEDlPM8rWSYTrPi3hH1wpwRhi2") {
+            sendPushNotification("ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ]","Item agregado",entityText);
+        };
+        
         if (entityText && entityText.length > 0) {
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
             const data = {
@@ -49,7 +83,8 @@ export default function HomeScreen(props) {
                 createdAt: timestamp,
                 price: 0,
                 done: false,
-                doneAt: null
+                doneAt: null,
+                enviado: false
             };
             entityRef
                 .add(data)
@@ -64,7 +99,36 @@ export default function HomeScreen(props) {
     };
 
     const onLeftPress = (item, precio) => {
+
+        const sendPushNotification = (token, title, body) => {
+            return fetch('https://exp.host/--/api/v2/push/send', {
+              body: JSON.stringify({
+                to: token,
+                title: title,
+                body: body,
+                data: { message: `${title} - ${body}` },
+                sound: "default",
+                icon: "/assets/images/lionIcon180-180.png",
+                android:{
+                    icon: "/assets/images/lionIcon180-180.png",
+                    sound:"default"
+                }
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              method: 'POST',
+            });
+        };
+
         setEntityPrice(precio)
+        if (item.authorID == "cWpIonzeQEduXVovIISGw93gdBF2") {
+            sendPushNotification("ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx]","Item cumplido",`Articulo: ${ item.text } Precio: $ ${ precio } `);
+        };
+        if (item.authorID == "x5jEDlPM8rWSYTrPi3hH1wpwRhi2") {
+            sendPushNotification("ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ]","Item cumplido",`Articulo: ${ item.text } Precio: $ ${ precio } `);
+        };
+
         const timestampDone = firebase.firestore.FieldValue.serverTimestamp();
         entityRef
         .doc(item.id).update({done: true, price: precio, doneAt: timestampDone})
