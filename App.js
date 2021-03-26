@@ -34,16 +34,17 @@ const getToken = async () => {
   }
 
   const token = await Notifications.getExpoPushTokenAsync();
-  //console.log(token);
+  
+  global.myToken = token.data
 
-  if (Platform.OS === 'android') {
-    Notifications.createChannelAndroidAsync('chat-messages', {
-      name: 'Chat messages',
-      sound: true,
-    });
-  }
+  // if (Platform.OS === 'android') {
+  //   Notifications.createChannelAndroidAsync('chat-messages', {
+  //     name: 'Chat messages',
+  //     sound: true,
+  //   });
+  // }
 
-  return token;
+  return token.data;
 };
 
 export default function App() {

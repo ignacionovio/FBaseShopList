@@ -2,11 +2,11 @@
   "expo": {
     "name": "GastosApp",
     "slug": "rnfbase",
-    "version": "1.0.1",
+    "version": "1.2",
     "orientation": "portrait",
-    "icon": "./payment-method.png",
+    "icon": "./assets/payment-method.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/payment-method.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

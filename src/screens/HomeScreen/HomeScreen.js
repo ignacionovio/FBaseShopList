@@ -5,8 +5,8 @@ import { firebase } from '../../firebase/config';
 import * as GestureHandler from 'react-native-gesture-handler';
 import moment from 'moment';
 const { Swipeable } = GestureHandler;
+import * as funciones from '../../functions/functions';
 
-//let moment = require('moment');
 moment.locale('es');
 
 export default function HomeScreen(props) {
@@ -14,16 +14,47 @@ export default function HomeScreen(props) {
     const [entityText, setEntityText] = useState('')
     const [entities, setEntities] = useState([])
     const [entityPrice, setEntityPrice] = useState('')
-
     const entityRef = firebase.firestore().collection('entities')
-    const userID = props.extraData.id
-    
+    //const userID = props.extraData.id
+    const userID = global.myUserID
+    //global.myUserID = userID;
+    //global.myFullName = props.extraData.fullName;
+    //global.myEmail = props.extraData.email;
+
+    //////////////////
+    //probaré metiendo aca la recuperacion de los users
+    const [users, setUsers] = useState([])
+
+    const usersRef = firebase.firestore().collection('users');
+
+    useEffect(() => {
+        usersRef
+            .onSnapshot(
+                querySnapshot => {
+                    const newUsers = []
+                    querySnapshot.forEach(doc => {
+                        const user = doc.data()
+                        //entity.id = doc.id
+                        newUsers.push(user)
+                    });
+                    setUsers(newUsers)
+                },
+                error => {
+                    console.log(error)
+                }
+            )
+    }, []);
+
+    global.myUsers = users;
+
+    //////////////////
+
     useEffect(() => {
         entityRef
             //.where("authorID", "==", userID)
             .where("done", "==", false)
+            //.orderBy('createdAt')
             //.get()
-            //.orderBy('createdAt', 'desc')
             .onSnapshot(
                 querySnapshot => {
                     const newEntities = []
@@ -42,39 +73,8 @@ export default function HomeScreen(props) {
 
     const onAddButtonPress = () => {
 
-        const sendPushNotification = (token, title, body) => {
-            return fetch('https://exp.host/--/api/v2/push/send', {
-              body: JSON.stringify({
-                to: token,
-                title: title,
-                body: body,
-                data: { message: `${title} - ${body}` },
-                sound: "default",
-                icon: "/assets/images/lionIcon180-180.png",
-                android:{
-                    icon: "/assets/images/lionIcon180-180.png",
-                    sound:"default"
-                }
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-            });
-        };
+        funciones.notifica(global.myUserID,'otros',"Item agregado",`${ global.myFullName } agregó a la lista: ${ entityText }`);
 
-        //ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ] Mi token
-        //ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx] token de july
-
-        if (userID == "cWpIonzeQEduXVovIISGw93gdBF2") { /*soy yo*/
-            sendPushNotification("ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx]","Item agregado",entityText);
-            
-        };
-        
-        if (userID == "x5jEDlPM8rWSYTrPi3hH1wpwRhi2") {
-            sendPushNotification("ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ]","Item agregado",entityText);
-        };
-        
         if (entityText && entityText.length > 0) {
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
             const data = {
@@ -100,33 +100,10 @@ export default function HomeScreen(props) {
 
     const onLeftPress = (item, precio) => {
 
-        const sendPushNotification = (token, title, body) => {
-            return fetch('https://exp.host/--/api/v2/push/send', {
-              body: JSON.stringify({
-                to: token,
-                title: title,
-                body: body,
-                data: { message: `${title} - ${body}` },
-                sound: "default",
-                icon: "/assets/images/lionIcon180-180.png",
-                android:{
-                    icon: "/assets/images/lionIcon180-180.png",
-                    sound:"default"
-                }
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-            });
-        };
-
         setEntityPrice(precio)
-        if (item.authorID == "cWpIonzeQEduXVovIISGw93gdBF2") {
-            sendPushNotification("ExponentPushToken[gdZiZrI0wxEgYInYlTcUnx]","Item cumplido",`Articulo: ${ item.text } Precio: $ ${ precio } `);
-        };
-        if (item.authorID == "x5jEDlPM8rWSYTrPi3hH1wpwRhi2") {
-            sendPushNotification("ExponentPushToken[A7a4LAOafYF-1iV-pS4abQ]","Item cumplido",`Articulo: ${ item.text } Precio: $ ${ precio } `);
+
+        if (item.authorID !== global.myUserID) {
+            funciones.notifica(item.authorID,'uno',"Item cumplido",`${ global.myFullName } compró: ${ item.text } Precio: $ ${ precio } `);
         };
 
         const timestampDone = firebase.firestore.FieldValue.serverTimestamp();

@@ -28,15 +28,27 @@ export default function LoginScreen({navigation}) {
                             return;
                         }
                         const user = firestoreDocument.data()
+                        global.myUserID = user.extraData.id;
+                        global.myFullName = user.extraData.fullName;
+                        global.myEmail = user.extraData.email;
                         navigation.navigate('Home', {user})
                     })
                     .catch(error => {
-                        alert(error)
+                        alert(error);
+                    });
+                usersRef
+                    .doc(uid).update({ntfToken: global.myToken})
+                    // .then(_doc => {
+                    // })
+                    .catch((error) => {
+                        alert(error);
                     });
             })
             .catch(error => {
-                alert(error)
+                alert(error);
             })
+
+
     }
 
     return (

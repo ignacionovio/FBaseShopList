@@ -9,10 +9,10 @@ export default function RegistrationScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-
+    
     const onFooterLinkPress = () => {
         navigation.navigate('Login')
-    }
+    };
 
     const onRegisterPress = () => {
         if (password !== confirmPassword) {
@@ -29,6 +29,7 @@ export default function RegistrationScreen({navigation}) {
                     id: uid,
                     email,
                     fullName,
+                    //ntfToken: global.myToken,
                 };
                 const usersRef = firebase.firestore().collection('users')
                 usersRef
@@ -38,11 +39,18 @@ export default function RegistrationScreen({navigation}) {
                         navigation.navigate('Home', {user: data})
                     })
                     .catch((error) => {
-                        alert(error)
+                        alert(error);
+                    });
+                usersRef
+                    .doc(uid).update({ntfToken: global.myToken})
+                    // .then(_doc => {
+                    // })
+                    .catch((error) => {
+                        alert(error);
                     });
             })
             .catch((error) => {
-                alert(error)
+                alert(error);
         });
     }
 
