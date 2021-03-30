@@ -7,6 +7,7 @@ import { firebase } from '../../firebase/config'
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [grupo, setGroup] = useState('')
 
     const onFooterLinkPress = () => {
         navigation.navigate('Registration')
@@ -28,9 +29,13 @@ export default function LoginScreen({navigation}) {
                             return;
                         }
                         const user = firestoreDocument.data()
+                        if (grupo) {
+                            global.myGroup = grupo;
+                        };
                         if (user) {
-                            navigation.navigate('Home', {user})
-                        }
+                            global.myGroup = grupo;
+                            navigation.navigate('Home', {user});
+                        };
                     })
                     .catch(error => {
                         alert(error);
@@ -67,6 +72,15 @@ export default function LoginScreen({navigation}) {
                     placeholder='Password'
                     onChangeText={(text) => setPassword(text)}
                     value={password}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholderTextColor="#aaaaaa"
+                    placeholder='Grupo'
+                    onChangeText={(text) => setGroup(text)}
+                    value={grupo}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />

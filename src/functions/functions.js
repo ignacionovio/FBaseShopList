@@ -13,6 +13,17 @@ export const updateNtfToken = (UserID, Token) => {
     };
 };
 
+export const updateGroup = (UserID, grupo) => {
+    //alert(`User ID: ${ UserID }\n Token: ${ Token }`);
+    if (UserID) {
+        usersRef
+        .doc(UserID).update({group: grupo})
+        .catch((error) => {
+            alert(error);
+        });
+    };
+};
+
 export const logNotifs = (UserID, Token, title, body) => {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     const ntfLogsRef = firebase.firestore().collection('notifications');

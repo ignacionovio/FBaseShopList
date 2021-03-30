@@ -10,7 +10,6 @@ import * as funciones from '../../functions/functions';
 moment.locale('es');
 
 export default function HomeScreen(props) {
-
     const [entityText, setEntityText] = useState('')
     const [entities, setEntities] = useState([])
     const [entityPrice, setEntityPrice] = useState('')
@@ -18,54 +17,64 @@ export default function HomeScreen(props) {
     const userID = global.myUserID
     if (props.extraData) {
         global.myFullName = props.extraData.fullName;
+    
+        if (props.extraData.group) {
+            global.myGroup = props.extraData.group;
+        };
     }
 
     const [users, setUsers] = useState([])
 
     const usersRef = firebase.firestore().collection('users');
 
-    useEffect(() => {
-        usersRef
-            .onSnapshot(
-                querySnapshot => {
-                    const newUsers = []
-                    querySnapshot.forEach(doc => {
-                        const user = doc.data()
-                        newUsers.push(user)
-                    });
-                    setUsers(newUsers)
-                },
-                error => {
-                    console.log(error)
-                }
-            )
-    }, []);
+    if (global.myGroup) {
+        useEffect(() => {
+            usersRef
+                .where("group", "==", global.myGroup)
+                .onSnapshot(
+                    querySnapshot => {
+                        const newUsers = []
+                        querySnapshot.forEach(doc => {
+                            const user = doc.data()
+                            newUsers.push(user)
+                        });
+                        setUsers(newUsers)
+                    },
+                    error => {
+                        console.log(error)
+                    }
+                )
+        }, []);
+    };
 
     global.myUsers = users;
 
+//.orderBy("createdAt","desc")
     //////////////////
-    useEffect(() => {
-        entityRef
-            .where("done", "==", false)
-            .onSnapshot(
-                querySnapshot => {
-                    const newEntities = []
-                    querySnapshot.forEach(doc => {
-                        const entity = doc.data()
-                        entity.id = doc.id
-                        newEntities.push(entity)
-                    });
-                    setEntities(newEntities)
-                },
-                error => {
-                    console.log(error)
-                }
-            )
-    }, []);
+    if (global.myGroup) {
+        useEffect(() => {
+            entityRef
+                .where("done", "==", false).where("grupo", "==", global.myGroup)
+                .onSnapshot(
+                    querySnapshot => {
+                        const newEntities = []
+                        querySnapshot.forEach(doc => {
+                            const entity = doc.data()
+                            entity.id = doc.id
+                            newEntities.push(entity)
+                        });
+                        setEntities(newEntities)
+                    },
+                    error => {
+                        console.log(error)
+                    }
+                )
+        }, []);
+    };
 
     const onAddButtonPress = () => {
 
-        funciones.notifica(global.myUserID,'otros',"Item agregado",`${ global.myFullName } agregó a la lista: ${ entityText }`);
+        funciones.notifica(global.myUserID,'todos',"Item agregado",`${ global.myFullName } agregó a la lista: ${ entityText }`);
 
         if (entityText && entityText.length > 0) {
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -76,7 +85,8 @@ export default function HomeScreen(props) {
                 price: 0,
                 done: false,
                 doneAt: null,
-                enviado: false
+                enviado: false,
+                grupo: global.myGroup,
             };
             entityRef
                 .add(data)

@@ -57,6 +57,9 @@ const getToken = async () => {
     funciones.updateNtfToken(global.myUserID, global.myToken);
   }
 
+  if (global.myUserID) {
+    funciones.updateGroup(global.myUserID, global.myGroup);
+  }
   // if (Platform.OS === 'android') {
   //   Notifications.createChannelAndroidAsync('chat-messages', {
   //     name: 'Chat messages',
@@ -90,6 +93,9 @@ export default function App() {
               if (user.email) {
                 global.myEmail = user.email;
               }
+              if (user.group) {
+                global.myGroup = user.group;
+              }
               setLoading(false)
               setUser(userData)
             })
@@ -114,7 +120,6 @@ export default function App() {
 
     const desloguea = () => {
 //      getToken();
-//      funciones.updateNtfToken(global.myUserID, global.myToken);
       global.myToken = "";
       funciones.updateNtfToken(global.myUserID, global.myToken);
       firebase.auth().signOut();

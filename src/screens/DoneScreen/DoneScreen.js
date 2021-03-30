@@ -20,7 +20,8 @@ export default function DoneScreen(props) {
     useEffect(() => {
         entityRef
             //.where("authorID", "==", userID)
-            .where("done", "==", true)
+            //.where("done", "==", true)
+            .where("done", "==", true).where("grupo", "==", global.myGroup)
             //.get()
             //.orderBy('createdAt', 'desc')
             .onSnapshot(
