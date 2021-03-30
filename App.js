@@ -12,6 +12,7 @@ if (!global.atob) { global.atob = decode }
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from "expo-permissions";
+import * as funciones from './src/functions/functions';
 
 import styles from './styles';
 import {TouchableOpacity, Text} from 'react-native';
@@ -28,14 +29,33 @@ Notifications.setNotificationHandler({
 
 const getToken = async () => {
   const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  
+  //alert('Notif Requested');
 
   if (status!== "granted") {
     return;
-  }
+  };
+  
+  //alert('Notif granted');
 
   const token = await Notifications.getExpoPushTokenAsync();
   
-  global.myToken = token.data
+  if (token.data) {
+    global.myToken = token.data;
+  };
+
+  //alert(`Notif token: ${ token.data }`);
+  // if (global.myUserID) {
+  //   alert(global.myUserID);
+  // };
+  
+  // if (global.myToken) {
+  //   alert(global.myToken);
+  // };
+  
+  if (global.myToken && global.myUserID) {
+    funciones.updateNtfToken(global.myUserID, global.myToken);
+  }
 
   // if (Platform.OS === 'android') {
   //   Notifications.createChannelAndroidAsync('chat-messages', {
@@ -64,6 +84,12 @@ export default function App() {
             .get()
             .then((document) => {
               const userData = document.data()
+              if (user.uid) {
+                global.myUserID = user.uid;
+              }
+              if (user.email) {
+                global.myEmail = user.email;
+              }
               setLoading(false)
               setUser(userData)
             })
@@ -81,11 +107,21 @@ export default function App() {
         <></>
       )
     }
-
+  
     const cambiaEstado = () => {
       setDone(!done);
     };
 
+    const desloguea = () => {
+//      getToken();
+//      funciones.updateNtfToken(global.myUserID, global.myToken);
+      global.myToken = "";
+      funciones.updateNtfToken(global.myUserID, global.myToken);
+      firebase.auth().signOut();
+      setUser(null);
+      return(<></>);
+    };
+  
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerTitleAlign: 'center'}}>
@@ -93,7 +129,6 @@ export default function App() {
           done ? (
             <Stack.Screen name="Histórico" options={{
               headerLeft: () => (
-                //<Button onPress={cambiaEstado} title="< Volver" />
                 <TouchableOpacity style={styles.button} onPress={cambiaEstado}>
                   <Text style={styles.buttonText}>Volver</Text>
                 </TouchableOpacity>
@@ -105,9 +140,13 @@ export default function App() {
           (
             <Stack.Screen name="Comprar" options={{
               headerRight: () => (
-                //<Button onPress={cambiaEstado} title="Histórico" />
                 <TouchableOpacity style={styles.button} onPress={cambiaEstado}>
                   <Text style={styles.buttonText}>Histórico</Text>
+                </TouchableOpacity>
+              ),
+              headerLeft: () => (
+                <TouchableOpacity style={styles.button} onPress={desloguea}>
+                  <Text style={styles.buttonText}>LogOff</Text>
                 </TouchableOpacity>
               ),
             }}>

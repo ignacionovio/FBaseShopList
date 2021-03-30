@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1052430455499",
+    "firebase_url": "https://appmia-48940.firebaseio.com",
+    "project_id": "appmia-48940",
+    "storage_bucket": "appmia-48940.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052430455499:android:f261aca83e95b1de2c814e",
+        "android_client_info": {
+          "package_name": "com.inovio.rnfbase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052430455499-g0qfhpbj0fvpifek5t4tvlb7ej46ob53.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPA5wwTzOZ94E7VAVDojl-g6AnO8hkm_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1052430455499-g0qfhpbj0fvpifek5t4tvlb7ej46ob53.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

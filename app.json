@@ -25,6 +25,7 @@
     "description": "App para control personal de gastos",
     "android": {
       "package": "com.inovio.rnfbase",
+      "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED"

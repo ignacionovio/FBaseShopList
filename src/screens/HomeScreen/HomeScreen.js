@@ -15,14 +15,11 @@ export default function HomeScreen(props) {
     const [entities, setEntities] = useState([])
     const [entityPrice, setEntityPrice] = useState('')
     const entityRef = firebase.firestore().collection('entities')
-    //const userID = props.extraData.id
     const userID = global.myUserID
-    //global.myUserID = userID;
-    //global.myFullName = props.extraData.fullName;
-    //global.myEmail = props.extraData.email;
+    if (props.extraData) {
+        global.myFullName = props.extraData.fullName;
+    }
 
-    //////////////////
-    //probaré metiendo aca la recuperacion de los users
     const [users, setUsers] = useState([])
 
     const usersRef = firebase.firestore().collection('users');
@@ -34,7 +31,6 @@ export default function HomeScreen(props) {
                     const newUsers = []
                     querySnapshot.forEach(doc => {
                         const user = doc.data()
-                        //entity.id = doc.id
                         newUsers.push(user)
                     });
                     setUsers(newUsers)
@@ -48,13 +44,9 @@ export default function HomeScreen(props) {
     global.myUsers = users;
 
     //////////////////
-
     useEffect(() => {
         entityRef
-            //.where("authorID", "==", userID)
             .where("done", "==", false)
-            //.orderBy('createdAt')
-            //.get()
             .onSnapshot(
                 querySnapshot => {
                     const newEntities = []
@@ -102,9 +94,9 @@ export default function HomeScreen(props) {
 
         setEntityPrice(precio)
 
-        if (item.authorID !== global.myUserID) {
+        //if (item.authorID !== global.myUserID) {
             funciones.notifica(item.authorID,'uno',"Item cumplido",`${ global.myFullName } compró: ${ item.text } Precio: $ ${ precio } `);
-        };
+        //};
 
         const timestampDone = firebase.firestore.FieldValue.serverTimestamp();
         entityRef
@@ -158,7 +150,6 @@ export default function HomeScreen(props) {
             >
             <View style={styles.entityContainer}>
                 <Text style={styles.entityText}>
-                    {/* {formatDate(item.createdAt)} - {item.text} */}
                     {formatDate(item.createdAt)} - {item.text.charAt(0).toUpperCase() + item.text.slice(1)}
                 </Text>
             </View>

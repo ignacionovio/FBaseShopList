@@ -16,7 +16,7 @@ export default function RegistrationScreen({navigation}) {
 
     const onRegisterPress = () => {
         if (password !== confirmPassword) {
-            alert("Passwords don't match.")
+            alert("Passwords no coinciden.")
             return
         }
     
@@ -29,7 +29,6 @@ export default function RegistrationScreen({navigation}) {
                     id: uid,
                     email,
                     fullName,
-                    //ntfToken: global.myToken,
                 };
                 const usersRef = firebase.firestore().collection('users')
                 usersRef
@@ -38,13 +37,6 @@ export default function RegistrationScreen({navigation}) {
                     .then(() => {
                         navigation.navigate('Home', {user: data})
                     })
-                    .catch((error) => {
-                        alert(error);
-                    });
-                usersRef
-                    .doc(uid).update({ntfToken: global.myToken})
-                    // .then(_doc => {
-                    // })
                     .catch((error) => {
                         alert(error);
                     });
@@ -61,11 +53,11 @@ export default function RegistrationScreen({navigation}) {
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
-                    source={require('../icon.png')}
+                    source={require('../../../assets/payment-method.png')}
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder='Full Name'
+                    placeholder='Nombre'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setFullName(text)}
                     value={fullName}
@@ -95,7 +87,7 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Confirm Password'
+                    placeholder='Repetir Password'
                     onChangeText={(text) => setConfirmPassword(text)}
                     value={confirmPassword}
                     underlineColorAndroid="transparent"
@@ -104,7 +96,7 @@ export default function RegistrationScreen({navigation}) {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
+                    <Text style={styles.buttonTitle}>Crear cuenta</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>

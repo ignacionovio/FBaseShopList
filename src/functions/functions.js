@@ -1,3 +1,39 @@
+import { firebase } from '../firebase/config'
+
+const usersRef = firebase.firestore().collection('users');
+
+export const updateNtfToken = (UserID, Token) => {
+    //alert(`User ID: ${ UserID }\n Token: ${ Token }`);
+    if (UserID) {
+        usersRef
+        .doc(UserID).update({ntfToken: Token})
+        .catch((error) => {
+            alert(error);
+        });
+    };
+};
+
+export const logNotifs = (UserID, Token, title, body) => {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const ntfLogsRef = firebase.firestore().collection('notifications');
+    //////////////////
+    const data = {
+        RtteUserID: UserID,
+        destToken: Token,
+        title: title,
+        body: body,
+        sent: timestamp
+    };
+    ntfLogsRef
+        .add(data)
+        // .then(_doc => {
+        // })
+        .catch((error) => {
+            alert(error)
+        });
+    //////////////////
+};
+
 const sendPushNotification = (token, title, body) => {
     return fetch('https://exp.host/--/api/v2/push/send', {
         body: JSON.stringify({
@@ -50,18 +86,16 @@ export const notifica = (userID, mode, title, body) => {
 
     if (Array.isArray(token)) {
         for (let i = 0; i < token.length; i++) {
-            sendPushNotification(token.[i],title,body);
-            // console.log("Hola");
-            // console.log(token.[i]);
-            // console.log(title);
-            // console.log(body);
+            if (token.[i]) {
+                sendPushNotification(token.[i],title,body);
+                logNotifs(global.myUserID, token.[i], title, body);
+            }
         }
     } else {
-        sendPushNotification(token,title,body);
-        // console.log("Hola2");
-        // console.log(token);
-        // console.log(title);
-        // console.log(body);
+        if (token) {
+            sendPushNotification(token,title,body);
+            logNotifs(global.myUserID, token, title, body);
+        }
     }
 
 };

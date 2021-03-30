@@ -24,30 +24,21 @@ export default function LoginScreen({navigation}) {
                     .get()
                     .then(firestoreDocument => {
                         if (!firestoreDocument.exists) {
-                            alert("User does not exist anymore.")
+                            alert("El usuario ya no existe")
                             return;
                         }
                         const user = firestoreDocument.data()
-                        global.myUserID = user.extraData.id;
-                        global.myFullName = user.extraData.fullName;
-                        global.myEmail = user.extraData.email;
-                        navigation.navigate('Home', {user})
+                        if (user) {
+                            navigation.navigate('Home', {user})
+                        }
                     })
                     .catch(error => {
-                        alert(error);
-                    });
-                usersRef
-                    .doc(uid).update({ntfToken: global.myToken})
-                    // .then(_doc => {
-                    // })
-                    .catch((error) => {
                         alert(error);
                     });
             })
             .catch(error => {
                 alert(error);
             })
-
 
     }
 
@@ -58,7 +49,7 @@ export default function LoginScreen({navigation}) {
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
-                    source={require('../icon.png')}
+                    source={require('../../../assets/payment-method.png')}
                 />
                 <TextInput
                     style={styles.input}
@@ -82,10 +73,10 @@ export default function LoginScreen({navigation}) {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
+                    <Text style={styles.buttonTitle}>Ingresar</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <Text style={styles.footerText}>Crea una cuenta <Text onPress={onFooterLinkPress} style={styles.footerLink}>Aqui</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </View>
