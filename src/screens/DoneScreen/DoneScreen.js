@@ -4,6 +4,7 @@ import styles from './styles';
 import { firebase } from '../../firebase/config';
 import * as GestureHandler from 'react-native-gesture-handler';
 const { Swipeable } = GestureHandler;
+import * as funciones from '../../functions/functions';
 
 let moment = require('moment');
 moment.locale('es');
@@ -63,21 +64,44 @@ export default function DoneScreen(props) {
         }
     };
 
-    const onLeftPress = (item, precio) => {
-        setEntityPrice(precio)
+    const onLeftPress = (item) => {
+
+        const acciones = () => {
+            alert('Item Reacivado');
+            funciones.notifica(global.myUserID,'otros',"Item Reactivado",`${ global.myFullName } reactivo el item: ${ item.text }`);
+            setEntityPrice(0)
+        };
+
         const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+
+        const data = {
+            text: item.text,
+            authorID: global.myUserID,
+            createdAt: timestamp,
+            price: 0,
+            done: false,
+            doneAt: null,
+            enviado: false,
+            grupo: item.grupo
+        };
         entityRef
-        .doc(item.id).update({done: true, price: precio, doneAt: timestamp})
-        .then(_doc => {
-            setEntityPrice('')
-            Keyboard.dismiss()
-        })
-        .catch((error) => {
-            alert(error)
+            .add(data)
+            .then(
+                acciones()
+            )
+            .catch((error) => {
+                alert(error)
             });
     };
 
     const onRightPress = (item) => {
+
+        const acciones = () => {
+            if (item.authorID !== global.myUserID) {
+                funciones.notifica(item.authorID,'uno',"Item Borrado",`${ global.myFullName } borró: ${ item.text } `)
+            }
+        }
+
         Alert.alert(
             'Alerta',
             'Borrar '+ item.text + '?',
@@ -85,7 +109,9 @@ export default function DoneScreen(props) {
                 {text: 'Si', onPress: () => {
                     entityRef
                     .doc(item.id).delete()
-                    .then(console.log('Borra '+item.id))
+                    .then(
+                            acciones()
+                        )
                     .catch((error) => {
                         alert(error)
                         });

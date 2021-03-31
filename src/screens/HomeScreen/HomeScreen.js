@@ -74,7 +74,7 @@ export default function HomeScreen(props) {
 
     const onAddButtonPress = () => {
 
-        funciones.notifica(global.myUserID,'todos',"Item agregado",`${ global.myFullName } agregó a la lista: ${ entityText }`);
+        funciones.notifica(global.myUserID,'otros',"Item agregado",`${ global.myFullName } agregó a la lista: ${ entityText }`);
 
         if (entityText && entityText.length > 0) {
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -104,9 +104,9 @@ export default function HomeScreen(props) {
 
         setEntityPrice(precio)
 
-        //if (item.authorID !== global.myUserID) {
+        if (item.authorID !== global.myUserID) {
             funciones.notifica(item.authorID,'uno',"Item cumplido",`${ global.myFullName } compró: ${ item.text } Precio: $ ${ precio } `);
-        //};
+        };
 
         const timestampDone = firebase.firestore.FieldValue.serverTimestamp();
         entityRef
@@ -121,6 +121,13 @@ export default function HomeScreen(props) {
     };
 
     const onRightPress = (item) => {
+
+        const acciones = () => {
+            if (item.authorID !== global.myUserID) {
+                funciones.notifica(item.authorID,'uno',"Item Borrado",`${ global.myFullName } borró: ${ item.text } `)
+            }
+        }
+
         Alert.alert(
             'Alerta',
             'Borrar '+ item.text + '?',
@@ -128,7 +135,9 @@ export default function HomeScreen(props) {
                 {text: 'Si', onPress: () => {
                     entityRef
                     .doc(item.id).delete()
-                    .then(console.log('Borra '+item.id))
+                    .then(
+                            acciones()
+                        )
                     .catch((error) => {
                         alert(error)
                         });

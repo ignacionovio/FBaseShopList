@@ -8,7 +8,6 @@ import { LoginScreen, HomeScreen, RegistrationScreen, DoneScreen } from './src/s
 import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
-//import { Notifications } from "expo";
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from "expo-permissions";
@@ -60,12 +59,15 @@ const getToken = async () => {
   if (global.myUserID) {
     funciones.updateGroup(global.myUserID, global.myGroup);
   }
-  // if (Platform.OS === 'android') {
-  //   Notifications.createChannelAndroidAsync('chat-messages', {
-  //     name: 'Chat messages',
-  //     sound: true,
-  //   });
-  // }
+  
+  if (Platform.OS === 'android') {
+    Notifications.createChannelAndroidAsync('chat-messages', {
+      name: 'Chat messages',
+      sound: true,
+      priority: 'max',
+      vibrate: [0, 250, 250, 250],
+    });
+  };
 
   return token.data;
 };
